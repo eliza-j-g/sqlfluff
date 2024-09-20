@@ -645,8 +645,17 @@ class CreateTableStatementSegment(BaseSegment):
         "CREATE",
         Ref("OrReplaceGrammar", optional=True),
         # Adding Teradata specific [MULTISET| SET]
-        OneOf("SET", "MULTISET", optional=True),
-        OneOf(Sequence("GLOBAL", "TEMPORARY"), "VOLATILE", optional=True),
+        OneOf(
+            Sequence(
+                OneOf("SET", "MULTISET", optional=True),
+                OneOf(Sequence("GLOBAL", "TEMPORARY"), "VOLATILE", optional=True),
+            ),
+            Sequence(
+                OneOf(Sequence("GLOBAL", "TEMPORARY"), "VOLATILE", optional=True),
+                OneOf("SET", "MULTISET", optional=True),
+            ),
+            optional=True,
+        ),
         "TABLE",
         Ref("IfNotExistsGrammar", optional=True),
         Ref("TableReferenceSegment"),
